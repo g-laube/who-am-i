@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Wer bin ich?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+    }
+    #mainContainer {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    #lobby, #roleAssignment, #gameView {
+      width: 100%;
+      max-width: 500px;
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    #errorBox {
+      color: red;
+      margin-top: 20px;
+      min-height: 1em;
+      text-align: center;
+    }
+    #createLobbyContainer {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #createLobbyBtn {
+      padding: 8px 16px;
+      border: none;
+      background-color: #6c757d; /* Grau für dezenten Look */
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+      max-width: 300px;
+      opacity: 0.8; /* Weniger auffällig */
+      transition: opacity 0.3s;
+    }
+    #createLobbyBtn:hover {
+      opacity: 1;
+      background-color: #5a6268;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      max-width: 300px;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    #hostWaitMessage {
+      color: #555;
+      margin-top: 10px;
+      font-style: italic;
+      text-align: center;
+    }
+    #guessList div {
+      margin-bottom: 10px;
+    }
+    #guessList button {
+      background-color: #dc3545;
+      width: auto;
+      padding: 5px 10px;
+      margin-left: 10px;
+      font-size: 14px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    #guessList button:hover {
+      background-color: #c82333;
+    }
+    ol {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    /* Medaillenfarben */
+    .gold {
+      color: gold;
+    }
+    .silver {
+      color: silver;
+    }
+    .bronze {
+      color: #cd7f32;
+    }
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      #mainContainer, #createLobbyContainer {
+        padding: 10px;
+      }
+      button, input[type="text"] {
+        max-width: 100%;
+      }
+    }
+    /* Fixierter "Lobby erstellen" Button */
+    #fixedCreateLobby {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      width: 100%;
+      max-width: 300px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <h1>Wer bin ich? (Digitale Version)</h1>
+
+  <div id="mainContainer">
+    <!-- Start-Bereich: Name eingeben und Lobby beitreten -->
+    <div id="start">
+      <input type="text" id="playerNameInput" placeholder="Dein Name" />
+      <br>
+      <input type="text" id="joinCode" placeholder="Lobby-Code"/>
+      <button id="joinLobbyBtn">Beitreten</button>
+    </div>
+
+    <!-- Lobby-Ansicht -->
+    <div id="lobby" style="display:none;">
+      <h2>Lobby</h2>
+      <p>Lobby-Code: <span id="lobbyCodeDisplay"></span></p>
+      <h3>Spieler:</h3>
+      <div id="playerList"></div>
+
+      <button id="startRoleAssignmentBtn" style="display:none;">Rollenvergabe starten</button>
+      <div id="hostWaitMessage" style="display:none;">
+        Warte, bis der Host die Rollenvergabe startet!
+      </div>
+    </div>
+
+    <!-- Rollenvergabe-Ansicht -->
+    <div id="roleAssignment" style="display:none;">
+      <h2>Rollenvergabe</h2>
+      <p id="assignInfo"></p>
+      <div id="assignmentArea"></div>
+      <button id="assignSubmitBtn">Rolle vergeben</button>
+    </div>
+
+    <!-- Spiel-Ansicht -->
+    <div id="gameView" style="display:none;">
+      <h2>Spiel läuft</h2>
+      <p>Hallo, <span id="ownName">???</span>!</p> <!-- Eigener Name -->
+      <h3>Andere Spieler:</h3>
+      <ul id="otherRoles"></ul>
+
+      <!-- Host-Bereich: "Rolle erraten?" -->
+      <div id="hostControls" style="display:none; margin-top:20px;">
+        <h3>Host-Bereich</h3>
+        <p>Klicke auf „Rolle erraten?“, falls ein Spieler seine Rolle gefunden hat.</p>
+        <div id="guessList"></div>
+      </div>
+
+      <!-- Scoreboard (Zwischenstand / Finale) -->
+      <div id="scoreboard" style="margin-top:20px;"></div>
+    </div>
+  </div>
+
+  <!-- Fixierter "Lobby erstellen" Button -->
+  <div id="fixedCreateLobby">
+    <button id="createLobbyBtn">Lobby erstellen</button>
+  </div>
+
+  <!-- Fehlermeldung -->
+  <div id="errorBox"></div>
+
+  <!-- Socket.io-Client-Bibliothek -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Dein Client-Script -->
+  <script src="client.js"></script>
+</body>
+</html>

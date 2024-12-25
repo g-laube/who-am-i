@@ -1,15 +1,13 @@
 {
-  "name": "nodejs",
+  "name": "wer-bin-ich",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Wer bin ich? Spiel mit Node.js, Express und Socket.io",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@types/node": "^18.0.6"
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1"
   }
 }
