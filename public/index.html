@@ -2,8 +2,10 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Wer bin ich?</title>
+  <title data-i18n="title">Wer bin ich?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- Wichtig für Responsive Design -->
   <style>
+    /* Basis-Stile */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -13,55 +15,49 @@
       flex-direction: column;
       min-height: 100vh;
     }
-    h1 {
-      text-align: center;
-      margin-top: 20px;
-    }
-    #mainContainer {
-      flex: 1;
+
+    /* Sprachumschalter-Stile */
+    #languageSwitcher {
+      position: fixed;
+      top: 10px;
+      right: 10px;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
+      gap: 10px;
+      z-index: 1002; /* Über dem Fehler-Box */
     }
-    #lobby, #roleAssignment, #gameView {
-      width: 100%;
-      max-width: 500px;
-      margin-top: 20px;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+    .language-btn {
+      width: 30px;
+      height: 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 24px;
+      transition: transform 0.2s;
     }
+
+    .language-btn:hover {
+      transform: scale(1.2);
+    }
+
+    /* Verbesserte Fehlerbox-Stile */
     #errorBox {
-      color: red;
-      margin-top: 20px;
-      min-height: 1em;
-      text-align: center;
-    }
-    #createLobbyContainer {
+      position: fixed; /* Fixiert die Fehlermeldung */
+      top: 0;
+      left: 0;
       width: 100%;
-      max-width: 500px;
-      padding: 20px;
+      background-color: #dc3545; /* Roter Hintergrund */
+      color: #ffffff; /* Weißer Text */
+      padding: 15px;
+      text-align: center;
+      font-size: 18px; /* Größere Schrift */
+      font-weight: bold; /* Fettdruck */
+      z-index: 1000; /* Höherer Z-Index, um über anderen Elementen zu liegen */
+      display: none; /* Standardmäßig verstecken */
       box-sizing: border-box;
     }
-    #createLobbyBtn {
-      padding: 8px 16px;
-      border: none;
-      background-color: #6c757d; /* Grau für dezenten Look */
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-      width: 100%;
-      max-width: 300px;
-      opacity: 0.8; /* Weniger auffällig */
-      transition: opacity 0.3s;
-    }
-    #createLobbyBtn:hover {
-      opacity: 1;
-      background-color: #5a6268;
-    }
+
+    /* Buttons und Eingabefelder */
     button {
       padding: 10px 20px;
       margin-top: 10px;
@@ -75,9 +71,11 @@
       max-width: 300px;
       transition: background-color 0.3s;
     }
+
     button:hover {
       background-color: #218838;
     }
+
     input[type="text"] {
       padding: 10px;
       width: 100%;
@@ -86,16 +84,20 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 16px;
+      box-sizing: border-box;
     }
-    #hostWaitMessage {
-      color: #555;
-      margin-top: 10px;
-      font-style: italic;
-      text-align: center;
+
+    /* Spezifische Button-Stile */
+    #createLobbyBtn {
+      background-color: #6c757d; /* Grau für dezenten Look */
+      opacity: 0.8; /* Weniger auffällig */
     }
-    #guessList div {
-      margin-bottom: 10px;
+
+    #createLobbyBtn:hover {
+      opacity: 1;
+      background-color: #5a6268;
     }
+
     #guessList button {
       background-color: #dc3545;
       width: auto;
@@ -105,15 +107,11 @@
       border-radius: 4px;
       transition: background-color 0.3s;
     }
+
     #guessList button:hover {
       background-color: #c82333;
     }
-    ol {
-      padding-left: 20px;
-    }
-    li {
-      margin-bottom: 8px;
-    }
+
     /* Medaillenfarben */
     .gold {
       color: gold;
@@ -124,7 +122,51 @@
     .bronze {
       color: #cd7f32;
     }
-    /* Responsive Design */
+
+    /* Vergrößerter Lobby-Code */
+    #lobbyCodeDisplay {
+      font-size: 24px; /* Größere Schrift */
+      font-weight: bold; /* Fettdruck */
+      padding: 10px;
+      border: 2px solid #28a745; /* Grüner Rahmen */
+      border-radius: 4px;
+      background-color: #e9ffe9; /* Heller Hintergrund */
+      margin: 10px 0;
+      text-align: center;
+      word-break: break-all; /* Zeilenumbruch bei langen Codes */
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Spielerübersicht */
+    #playerList {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f8f9fa; /* Heller Hintergrund */
+      border: 1px solid #ced4da; /* Dezenter Rahmen */
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #playerList h3 {
+      margin-bottom: 10px;
+      color: #343a40; /* Dunklere Farbe für die Überschrift */
+      text-align: center;
+    }
+
+    /* Einzelne Spieler */
+    #playerList div {
+      padding: 8px;
+      margin-bottom: 5px;
+      background-color: #ffffff; /* Weißer Hintergrund für einzelne Einträge */
+      border: 1px solid #dee2e6; /* Dezenter Rahmen */
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Leichter Schatten für Tiefe */
+      text-align: center;
+    }
+
+    /* Responsive Design mit Media Queries */
     @media (max-width: 600px) {
       #mainContainer, #createLobbyContainer {
         padding: 10px;
@@ -132,7 +174,15 @@
       button, input[type="text"] {
         max-width: 100%;
       }
+      h1 {
+        font-size: 24px;
+      }
+      #lobbyCodeDisplay {
+        font-size: 24px; /* Vollbreiten-Anzeige mit großer Schrift */
+        max-width: 100%;
+      }
     }
+
     /* Fixierter "Lobby erstellen" Button */
     #fixedCreateLobby {
       position: fixed;
@@ -145,52 +195,147 @@
       padding: 10px;
       box-sizing: border-box;
     }
+
+    /* Zusätzliche Optimierungen für bessere mobile Nutzung */
+    #playerList, #otherRoles, #guessList {
+      width: 100%;
+      max-width: 100%;
+      text-align: center;
+    }
+
+    ul, ol {
+      padding-left: 20px;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    li {
+      margin-bottom: 8px;
+      word-wrap: break-word;
+    }
+
+    /* Share-Button spezifische Stile */
+    #shareLobbyCodeBtn {
+      background-color: #007bff; /* Blau */
+      opacity: 0.8;
+    }
+
+    #shareLobbyCodeBtn:hover {
+      background-color: #0069d9;
+      opacity: 1;
+    }
+
+    /* Snackbar Stile */
+    #snackbar {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 2px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1001;
+      left: 50%;
+      bottom: 30px;
+      font-size: 17px;
+    }
+
+    #snackbar.show {
+      visibility: visible;
+      -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @-webkit-keyframes fadein {
+      from {bottom: 0; opacity: 0;}
+      to {bottom: 30px; opacity: 1;}
+    }
+
+    @keyframes fadein {
+      from {bottom: 0; opacity: 0;}
+      to {bottom: 30px; opacity: 1;}
+    }
+
+    @-webkit-keyframes fadeout {
+      from {bottom: 30px; opacity: 1;}
+      to {bottom: 0; opacity: 0;}
+    }
+
+    @keyframes fadeout {
+      from {bottom: 30px; opacity: 1;}
+      to {bottom: 0; opacity: 0;}
+    }
+
+    /* Hinzugefügte Styles zur Vermeidung von Überlappungen */
+    #mainContainer {
+      padding-top: 60px; /* Abstand nach oben, um den Sprachumschalter zu vermeiden */
+    }
+
+    h1 {
+      margin-top: 0; /* Entferne den ursprünglichen oberen Abstand */
+    }
   </style>
 </head>
 <body>
-  <h1>Wer bin ich? (Digitale Version)</h1>
+  <!-- Sprachumschalter -->
+  <div id="languageSwitcher">
+    <button class="language-btn" data-lang="de" aria-label="Deutsch">🇩🇪</button>
+    <button class="language-btn" data-lang="en" aria-label="English">🇺🇸</button>
+  </div>
+
+  <!-- Fehlermeldung -->
+  <div id="errorBox"></div> <!-- Standardmäßig verstecken, zeigt sich nur bei Fehlern -->
+
+  <h1 data-i18n="title">Wer bin ich? (Digitale Version)</h1>
 
   <div id="mainContainer">
     <!-- Start-Bereich: Name eingeben und Lobby beitreten -->
     <div id="start">
-      <input type="text" id="playerNameInput" placeholder="Dein Name" />
+      <input type="text" id="playerNameInput" placeholder="Dein Name" data-i18n-placeholder="enterName" />
       <br>
-      <input type="text" id="joinCode" placeholder="Lobby-Code"/>
-      <button id="joinLobbyBtn">Beitreten</button>
+      <input type="text" id="joinCode" placeholder="Lobby-Code" data-i18n-placeholder="enterLobbyCode" />
+      <button id="joinLobbyBtn" data-i18n="join">Beitreten</button>
     </div>
 
     <!-- Lobby-Ansicht -->
     <div id="lobby" style="display:none;">
-      <h2>Lobby</h2>
-      <p>Lobby-Code: <span id="lobbyCodeDisplay"></span></p>
-      <h3>Spieler:</h3>
+      <h2 data-i18n="lobby">Lobby</h2>
+      <p data-i18n="lobbyCode">Lobby-Code:</p>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+        <span id="lobbyCodeDisplay" class="full-width"></span>
+        <button id="shareLobbyCodeBtn" data-i18n="share">Teilen</button>
+      </div>
+      <!-- Entfernt die vorherige Überschrift -->
+      <!-- <h3>Spieler:</h3> -->
       <div id="playerList"></div>
 
-      <button id="startRoleAssignmentBtn" style="display:none;">Rollenvergabe starten</button>
-      <div id="hostWaitMessage" style="display:none;">
+      <button id="startRoleAssignmentBtn" style="display:none;" data-i18n="startRoleAssignment">Rollenvergabe starten</button>
+      <div id="hostWaitMessage" style="display:none;" data-i18n="hostWait">
         Warte, bis der Host die Rollenvergabe startet!
       </div>
     </div>
 
     <!-- Rollenvergabe-Ansicht -->
     <div id="roleAssignment" style="display:none;">
-      <h2>Rollenvergabe</h2>
+      <h2 data-i18n="roleAssignment">Rollenvergabe</h2>
       <p id="assignInfo"></p>
       <div id="assignmentArea"></div>
-      <button id="assignSubmitBtn">Rolle vergeben</button>
+      <button id="assignSubmitBtn" data-i18n="submitRole">Rolle vergeben</button>
     </div>
 
     <!-- Spiel-Ansicht -->
     <div id="gameView" style="display:none;">
-      <h2>Spiel läuft</h2>
-      <p>Hallo, <span id="ownName">???</span>!</p> <!-- Eigener Name -->
-      <h3>Andere Spieler:</h3>
+      <h2 data-i18n="gameRunning">Spiel läuft</h2>
+      <p data-i18n="greeting">Hallo, <span id="ownName">???</span>!</p> <!-- Eigener Name -->
+      <h3 data-i18n="otherPlayers">Andere Spieler:</h3>
       <ul id="otherRoles"></ul>
 
       <!-- Host-Bereich: "Rolle erraten?" -->
       <div id="hostControls" style="display:none; margin-top:20px;">
-        <h3>Host-Bereich</h3>
-        <p>Klicke auf „Rolle erraten?“, falls ein Spieler seine Rolle gefunden hat.</p>
+        <h3 data-i18n="hostArea">Host-Bereich</h3>
+        <p data-i18n="guessRole">Klicke auf „Rolle erraten?“, falls ein Spieler seine Rolle gefunden hat.</p>
         <div id="guessList"></div>
       </div>
 
@@ -201,13 +346,10 @@
 
   <!-- Fixierter "Lobby erstellen" Button -->
   <div id="fixedCreateLobby">
-    <button id="createLobbyBtn">Lobby erstellen</button>
+    <button id="createLobbyBtn" data-i18n="createLobby">Lobby erstellen</button>
   </div>
 
-  <!-- Fehlermeldung -->
-  <div id="errorBox"></div>
-
-  <!-- Socket.io-Client-Bibliothek -->
+  <!-- Socket.io-Client Bibliothek -->
   <script src="/socket.io/socket.io.js"></script>
   <!-- Dein Client-Script -->
   <script src="client.js"></script>

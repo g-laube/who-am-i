@@ -2,9 +2,9 @@
   "name": "wer-bin-ich",
   "version": "1.0.0",
   "description": "Wer bin ich? Spiel mit Node.js, Express und Socket.io",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "express": "^4.18.2",
